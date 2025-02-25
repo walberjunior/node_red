@@ -27,18 +27,16 @@
             "58b4c7cd443442ce",
             "618797c718a17d33",
             "6cf2992afd5bfc86",
-            "fef9acf18c4fb22e",
             "41f1532bc9b0e46c",
             "cf1fc2e4b0e86b7f",
-            "8724c9c1b789e008",
             "ee551dd4e954c132",
             "8f1d522bd9de4d4b",
             "16a008bb758d65b3"
         ],
         "x": 34,
-        "y": 439,
-        "w": 1132,
-        "h": 442
+        "y": 419,
+        "w": 772,
+        "h": 522
     },
     {
         "id": "8b1af6cf87434268",
@@ -46,15 +44,15 @@
         "z": "7547a558cf945eb1",
         "g": "f111683363638e16",
         "name": "URL CIP B4b",
-        "func": "let operadora = \"CEMIG-D\";\nlet hoje = new Date().toISOString().split('T')[0];\n\nmsg.url = `https://dadosabertos.aneel.gov.br/api/3/action/datastore_search_sql?sql=SELECT * from \"fcf2906c-7c32-4b9b-a637-054e7a5234f4\" where \"SigAgente\"= '${operadora}' and \"DscBaseTarifaria\"='Tarifa de Aplicação' and \"DscSubGrupo\"='B4' and \"DscClasse\"='Iluminação pública' and \"DscModalidadeTarifaria\"='Convencional' and \"DscSubClasse\"='Iluminação pública %C2%96 B4b' and \"DscDetalhe\"='Não se aplica' and \"DatFimVigencia\" > '${hoje}'`;\n\nreturn msg;\n",
+        "func": "let operadora = msg.operadora;\nlet hoje = new Date().toISOString().split('T')[0];\n\nmsg.url = `https://dadosabertos.aneel.gov.br/api/3/action/datastore_search_sql?sql=SELECT * from \"fcf2906c-7c32-4b9b-a637-054e7a5234f4\" where \"SigAgente\"= '${operadora}' and \"DscBaseTarifaria\"='Tarifa de Aplicação' and \"DscSubGrupo\"='B4' and \"DscClasse\"='Iluminação pública' and \"DscModalidadeTarifaria\"='Convencional' and \"DscSubClasse\"='Iluminação pública %C2%96 B4b' and \"DscDetalhe\"='Não se aplica' and \"DatFimVigencia\" > '${hoje}'`;\n\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 530,
-        "y": 700,
+        "x": 170,
+        "y": 760,
         "wires": [
             [
                 "1629c5d4cdf3580b"
@@ -78,8 +76,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 730,
-        "y": 700,
+        "x": 370,
+        "y": 760,
         "wires": [
             [
                 "e1687298b22e3567"
@@ -99,8 +97,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 890,
-        "y": 700,
+        "x": 530,
+        "y": 760,
         "wires": [
             [
                 "41f1532bc9b0e46c",
@@ -122,8 +120,8 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 540,
-        "y": 840,
+        "x": 180,
+        "y": 900,
         "wires": []
     },
     {
@@ -140,8 +138,8 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1050,
-        "y": 540,
+        "x": 690,
+        "y": 600,
         "wires": []
     },
     {
@@ -157,8 +155,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 890,
-        "y": 540,
+        "x": 530,
+        "y": 600,
         "wires": [
             [
                 "90b47eac3553bb2f",
@@ -183,8 +181,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 730,
-        "y": 540,
+        "x": 370,
+        "y": 600,
         "wires": [
             [
                 "452925e85c1ce840"
@@ -197,15 +195,15 @@
         "z": "7547a558cf945eb1",
         "g": "f111683363638e16",
         "name": "URL Tarifa",
-        "func": "msg.total = parseFloat(msg.total);\nmsg.kwh_consumido = parseFloat(msg.kwh_consumido);\nlet operadora = (\"CEMIG-D\");\nlet hoje = new Date().toISOString().split('T')[0];\n\nmsg.url = `https://dadosabertos.aneel.gov.br/api/3/action/datastore_search_sql?sql=SELECT * from \"fcf2906c-7c32-4b9b-a637-054e7a5234f4\" where \"SigAgente\"= '${operadora}' and \"DscBaseTarifaria\"='Tarifa de Aplicação' and \"DscSubGrupo\"='B1' and \"DscClasse\"='Residencial' and \"DscModalidadeTarifaria\"='Convencional' and \"DscSubClasse\"='Residencial' and \"DscDetalhe\"='Não se aplica' and \"DatFimVigencia\" > '${hoje}'`;\n\nreturn msg;",
+        "func": "msg.total = parseFloat(msg.total);\nmsg.kwh_consumido = parseFloat(msg.kwh_consumido);\nlet operadora = msg.operadora;\nlet hoje = new Date().toISOString().split('T')[0];\n\nmsg.url = `https://dadosabertos.aneel.gov.br/api/3/action/datastore_search_sql?sql=SELECT * from \"fcf2906c-7c32-4b9b-a637-054e7a5234f4\" where \"SigAgente\"= '${operadora}' and \"DscBaseTarifaria\"='Tarifa de Aplicação' and \"DscSubGrupo\"='B1' and \"DscClasse\"='Residencial' and \"DscModalidadeTarifaria\"='Convencional' and \"DscSubClasse\"='Residencial' and \"DscDetalhe\"='Não se aplica' and \"DatFimVigencia\" > '${hoje}'`;\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 530,
-        "y": 540,
+        "x": 170,
+        "y": 600,
         "wires": [
             [
                 "45138c3bb9aa4439"
@@ -225,8 +223,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 900,
-        "y": 620,
+        "x": 540,
+        "y": 680,
         "wires": [
             [
                 "6cf2992afd5bfc86",
@@ -251,8 +249,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 730,
-        "y": 620,
+        "x": 370,
+        "y": 680,
         "wires": [
             [
                 "985af0ad41cabd7a"
@@ -272,8 +270,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 540,
-        "y": 620,
+        "x": 180,
+        "y": 680,
         "wires": [
             [
                 "7bceb485ca26a086"
@@ -313,7 +311,7 @@
             }
         ],
         "x": 120,
-        "y": 480,
+        "y": 520,
         "wires": [
             [
                 "618797c718a17d33"
@@ -339,7 +337,7 @@
         "repair": false,
         "outputs": 1,
         "x": 290,
-        "y": 480,
+        "y": 520,
         "wires": [
             [
                 "8f1d522bd9de4d4b"
@@ -360,61 +358,9 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1060,
-        "y": 620,
+        "x": 700,
+        "y": 680,
         "wires": []
-    },
-    {
-        "id": "fef9acf18c4fb22e",
-        "type": "inject",
-        "z": "7547a558cf945eb1",
-        "d": true,
-        "g": "f111683363638e16",
-        "name": "",
-        "props": [
-            {
-                "p": "impostos.icms",
-                "v": "0.18",
-                "vt": "num"
-            },
-            {
-                "p": "impostos.pasep",
-                "v": "0.0083",
-                "vt": "num"
-            },
-            {
-                "p": "impostos.cofins",
-                "v": "0.0382",
-                "vt": "num"
-            },
-            {
-                "p": "kwh_consumido",
-                "v": "216",
-                "vt": "num"
-            },
-            {
-                "p": "total",
-                "v": "homeassistant.homeAssistant.states[\"sensor.consumo_total\"].state",
-                "vt": "global"
-            },
-            {
-                "p": "solar",
-                "v": "true",
-                "vt": "bool"
-            }
-        ],
-        "repeat": "1800",
-        "crontab": "",
-        "once": true,
-        "onceDelay": "10",
-        "topic": "",
-        "x": 170,
-        "y": 620,
-        "wires": [
-            [
-                "90100faaf9e90caa"
-            ]
-        ]
     },
     {
         "id": "41f1532bc9b0e46c",
@@ -429,8 +375,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 540,
-        "y": 780,
+        "x": 180,
+        "y": 840,
         "wires": [
             [
                 "ee551dd4e954c132",
@@ -452,59 +398,9 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1050,
-        "y": 700,
+        "x": 690,
+        "y": 760,
         "wires": []
-    },
-    {
-        "id": "8724c9c1b789e008",
-        "type": "inject",
-        "z": "7547a558cf945eb1",
-        "d": true,
-        "g": "f111683363638e16",
-        "name": "",
-        "props": [
-            {
-                "p": "impostos.icms",
-                "v": "0.18",
-                "vt": "num"
-            },
-            {
-                "p": "impostos.pasep",
-                "v": "0.0083",
-                "vt": "num"
-            },
-            {
-                "p": "impostos.cofins",
-                "v": "0.0382",
-                "vt": "num"
-            },
-            {
-                "p": "kwh_consumido",
-                "v": "45",
-                "vt": "num"
-            },
-            {
-                "p": "total",
-                "v": "$number(global.homeassistant.homeAssistant.states[\"sensor.consumo_total\"].state)",
-                "vt": "jsonata"
-            },
-            {
-                "p": "solar",
-                "v": "true",
-                "vt": "bool"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": "5",
-        "topic": "",
-        "x": 350,
-        "y": 620,
-        "wires": [
-            []
-        ]
     },
     {
         "id": "ee551dd4e954c132",
@@ -555,8 +451,8 @@
         ],
         "inputOverride": "allow",
         "outputProperties": [],
-        "x": 750,
-        "y": 780,
+        "x": 390,
+        "y": 840,
         "wires": [
             []
         ]
@@ -566,8 +462,29 @@
         "type": "change",
         "z": "7547a558cf945eb1",
         "g": "f111683363638e16",
-        "name": "",
+        "name": "Dados (Operadora, Impostos e Sensor)",
         "rules": [
+            {
+                "t": "set",
+                "p": "operadora",
+                "pt": "msg",
+                "to": "CEMIG-D",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "solar",
+                "pt": "msg",
+                "to": "true",
+                "tot": "bool"
+            },
+            {
+                "t": "set",
+                "p": "kwh_consumido",
+                "pt": "msg",
+                "to": "homeassistant.homeAssistant.states[\"sensor.consumo_mensal_total\"].state",
+                "tot": "global"
+            },
             {
                 "t": "set",
                 "p": "impostos.icms",
@@ -591,20 +508,6 @@
             },
             {
                 "t": "set",
-                "p": "solar",
-                "pt": "msg",
-                "to": "true",
-                "tot": "bool"
-            },
-            {
-                "t": "set",
-                "p": "kwh_consumido",
-                "pt": "msg",
-                "to": "homeassistant.homeAssistant.states[\"sensor.consumo_mensal_total\"].state",
-                "tot": "global"
-            },
-            {
-                "t": "set",
                 "p": "total",
                 "pt": "msg",
                 "to": "homeassistant.homeAssistant.states[\"sensor.consumo_total\"].state",
@@ -616,8 +519,8 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 320,
-        "y": 540,
+        "x": 560,
+        "y": 520,
         "wires": [
             [
                 "90100faaf9e90caa"
@@ -637,7 +540,7 @@
         "onceDelay": "10",
         "topic": "",
         "x": 130,
-        "y": 540,
+        "y": 460,
         "wires": [
             [
                 "8f1d522bd9de4d4b"
