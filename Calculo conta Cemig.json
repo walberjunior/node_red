@@ -1,0 +1,711 @@
+[
+    {
+        "id": "f111683363638e16",
+        "type": "group",
+        "z": "7547a558cf945eb1",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "8b1af6cf87434268",
+            "1629c5d4cdf3580b",
+            "e1687298b22e3567",
+            "499b0a1d7553dc4f",
+            "90b47eac3553bb2f",
+            "452925e85c1ce840",
+            "45138c3bb9aa4439",
+            "90100faaf9e90caa",
+            "985af0ad41cabd7a",
+            "7bceb485ca26a086",
+            "12f16d2f36d75f44",
+            "58b4c7cd443442ce",
+            "618797c718a17d33",
+            "6cf2992afd5bfc86",
+            "fef9acf18c4fb22e",
+            "41f1532bc9b0e46c",
+            "cf1fc2e4b0e86b7f",
+            "8724c9c1b789e008",
+            "ee551dd4e954c132",
+            "8f1d522bd9de4d4b",
+            "16a008bb758d65b3"
+        ],
+        "x": 34,
+        "y": 439,
+        "w": 1132,
+        "h": 442
+    },
+    {
+        "id": "8b1af6cf87434268",
+        "type": "function",
+        "z": "7547a558cf945eb1",
+        "g": "f111683363638e16",
+        "name": "URL CIP B4b",
+        "func": "let operadora = \"CEMIG-D\";\nlet hoje = new Date().toISOString().split('T')[0];\n\nmsg.url = `https://dadosabertos.aneel.gov.br/api/3/action/datastore_search_sql?sql=SELECT * from \"fcf2906c-7c32-4b9b-a637-054e7a5234f4\" where \"SigAgente\"= '${operadora}' and \"DscBaseTarifaria\"='Tarifa de Aplicação' and \"DscSubGrupo\"='B4' and \"DscClasse\"='Iluminação pública' and \"DscModalidadeTarifaria\"='Convencional' and \"DscSubClasse\"='Iluminação pública %C2%96 B4b' and \"DscDetalhe\"='Não se aplica' and \"DatFimVigencia\" > '${hoje}'`;\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 530,
+        "y": 700,
+        "wires": [
+            [
+                "1629c5d4cdf3580b"
+            ]
+        ]
+    },
+    {
+        "id": "1629c5d4cdf3580b",
+        "type": "http request",
+        "z": "7547a558cf945eb1",
+        "g": "f111683363638e16",
+        "name": "",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 730,
+        "y": 700,
+        "wires": [
+            [
+                "e1687298b22e3567"
+            ]
+        ]
+    },
+    {
+        "id": "e1687298b22e3567",
+        "type": "function",
+        "z": "7547a558cf945eb1",
+        "g": "f111683363638e16",
+        "name": "CIP",
+        "func": "// Calcula a Contribuição de Iluminação Pública (CIP)\nif (msg.payload.success) {\n    let registro = msg.payload.result.records[0];\n    let tarifaTUSD = parseFloat(registro.VlrTUSD.replace(\",\", \".\"));\n    let tarifaTE = parseFloat(registro.VlrTE.replace(\",\", \".\"));\n    let tarifaTotal = tarifaTUSD + tarifaTE;\n\n    let consumoKWh = msg.kwh_consumido;\n    let percentualCIP = 0;\n\n    // Define a alíquota de CIP com base no consumo\n    if (consumoKWh >= 31 && consumoKWh <= 50) {\n        percentualCIP = 1.00;\n    } else if (consumoKWh >= 51 && consumoKWh <= 100) {\n        percentualCIP = 2.00;\n    } else if (consumoKWh >= 101 && consumoKWh <= 200) {\n        percentualCIP = 6.00;\n    } else if (consumoKWh >= 201 && consumoKWh <= 300) {\n        percentualCIP = 9.00;\n    } else if (consumoKWh >= 301) {\n        percentualCIP = 10.00;\n    }\n\n    let valorCIP = (parseInt(tarifaTotal * percentualCIP)) / 100;\n\n    msg.iluminacaoPublica = {\n        tarifaTUSD,\n        tarifaTE,\n        tarifaTotal,\n        percentualCIP, //: percentualCIP + \"%\",\n        valorCIP\n    };\n\n    return msg;\n} else {\n    msg.payload = { error: \"Erro na resposta da API\" };\n}\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 890,
+        "y": 700,
+        "wires": [
+            [
+                "41f1532bc9b0e46c",
+                "cf1fc2e4b0e86b7f"
+            ]
+        ]
+    },
+    {
+        "id": "499b0a1d7553dc4f",
+        "type": "debug",
+        "z": "7547a558cf945eb1",
+        "g": "f111683363638e16",
+        "name": "Calculo Conta",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 540,
+        "y": 840,
+        "wires": []
+    },
+    {
+        "id": "90b47eac3553bb2f",
+        "type": "debug",
+        "z": "7547a558cf945eb1",
+        "g": "f111683363638e16",
+        "name": "Tarifa",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1050,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "452925e85c1ce840",
+        "type": "function",
+        "z": "7547a558cf945eb1",
+        "g": "f111683363638e16",
+        "name": "Tarifa",
+        "func": "// Processa a resposta da API e calcula os valores da tarifa de energia\nif (msg.payload.success) {\n    let registro = msg.payload.result.records[0];\n\n    // Converte os valores de TUSD e TE para números de ponto flutuante\n    let tarifaTUSD = registro.VlrTUSD.replace(\",\", \".\");\n    let tarifaTE = registro.VlrTE.replace(\",\", \".\");\n    let unidadeMedida = registro.DscUnidadeTerciaria;\n\n    // Converte para kWh se a unidade for MWh\n    if (unidadeMedida === \"MWh\") {\n        tarifaTUSD /= 1000;\n        tarifaTE /= 1000;\n    }\n\n    let tarifaTotal = tarifaTUSD + tarifaTE;\n\n    msg.valorKWh = {\n        tarifaTUSD,\n        tarifaTE,\n        unidadeMedida,\n        tarifaTotal\n    };\n\n    return msg;\n} else {\n    msg.payload = { error: \"Erro na resposta da API\" };\n    // return msg;\n}\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 890,
+        "y": 540,
+        "wires": [
+            [
+                "90b47eac3553bb2f",
+                "12f16d2f36d75f44"
+            ]
+        ]
+    },
+    {
+        "id": "45138c3bb9aa4439",
+        "type": "http request",
+        "z": "7547a558cf945eb1",
+        "g": "f111683363638e16",
+        "name": "",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 730,
+        "y": 540,
+        "wires": [
+            [
+                "452925e85c1ce840"
+            ]
+        ]
+    },
+    {
+        "id": "90100faaf9e90caa",
+        "type": "function",
+        "z": "7547a558cf945eb1",
+        "g": "f111683363638e16",
+        "name": "URL Tarifa",
+        "func": "msg.total = parseFloat(msg.total);\nmsg.kwh_consumido = parseFloat(msg.kwh_consumido);\nlet operadora = (\"CEMIG-D\");\nlet hoje = new Date().toISOString().split('T')[0];\n\nmsg.url = `https://dadosabertos.aneel.gov.br/api/3/action/datastore_search_sql?sql=SELECT * from \"fcf2906c-7c32-4b9b-a637-054e7a5234f4\" where \"SigAgente\"= '${operadora}' and \"DscBaseTarifaria\"='Tarifa de Aplicação' and \"DscSubGrupo\"='B1' and \"DscClasse\"='Residencial' and \"DscModalidadeTarifaria\"='Convencional' and \"DscSubClasse\"='Residencial' and \"DscDetalhe\"='Não se aplica' and \"DatFimVigencia\" > '${hoje}'`;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 530,
+        "y": 540,
+        "wires": [
+            [
+                "45138c3bb9aa4439"
+            ]
+        ]
+    },
+    {
+        "id": "985af0ad41cabd7a",
+        "type": "function",
+        "z": "7547a558cf945eb1",
+        "g": "f111683363638e16",
+        "name": "Bandeira",
+        "func": "// Processa os dados da bandeira tarifária\nif (msg.payload.success) {\n    let registro = msg.payload.result.records[0];\n    let corBandeira = registro.NomBandeiraAcionada;\n    let valorAdicionalBandeira = registro.VlrAdicionalBandeira.replace(\",\", \".\") / 1000;\n\n    msg.bandeiraTarifaria = {\n        corBandeira,\n        valorAdicionalBandeira\n    };\n\n    return msg;\n} else {\n    msg.payload = { error: \"Erro na resposta da API\" };\n    // return msg;\n}",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 900,
+        "y": 620,
+        "wires": [
+            [
+                "6cf2992afd5bfc86",
+                "8b1af6cf87434268"
+            ]
+        ]
+    },
+    {
+        "id": "7bceb485ca26a086",
+        "type": "http request",
+        "z": "7547a558cf945eb1",
+        "g": "f111683363638e16",
+        "name": "",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 730,
+        "y": 620,
+        "wires": [
+            [
+                "985af0ad41cabd7a"
+            ]
+        ]
+    },
+    {
+        "id": "12f16d2f36d75f44",
+        "type": "function",
+        "z": "7547a558cf945eb1",
+        "g": "f111683363638e16",
+        "name": "URL Bandeira",
+        "func": "let data = new Date();\nlet anomes = data.getFullYear() + \"-\" + String(data.getMonth() + 1).padStart(2, '0') + '-%';\n\nmsg.url = `https://dadosabertos.aneel.gov.br/api/3/action/datastore_search_sql?sql=SELECT * from \"0591b8f6-fe54-437b-b72b-1aa2efd46e42\" where \"DatCompetencia\" like '${anomes}'`;\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 540,
+        "y": 620,
+        "wires": [
+            [
+                "7bceb485ca26a086"
+            ]
+        ]
+    },
+    {
+        "id": "58b4c7cd443442ce",
+        "type": "server-events",
+        "z": "7547a558cf945eb1",
+        "g": "f111683363638e16",
+        "name": "HA Restart",
+        "server": "33803899.487d48",
+        "version": 3,
+        "exposeAsEntityConfig": "",
+        "eventType": "home_assistant_client",
+        "eventData": "",
+        "waitForRunning": true,
+        "outputProperties": [
+            {
+                "property": "entity_id",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "eventData"
+            },
+            {
+                "property": "topic",
+                "propertyType": "msg",
+                "value": "$outputData(\"eventData\").event_type",
+                "valueType": "jsonata"
+            },
+            {
+                "property": "event_type",
+                "propertyType": "msg",
+                "value": "$outputData(\"eventData\").event_type",
+                "valueType": "jsonata"
+            }
+        ],
+        "x": 120,
+        "y": 480,
+        "wires": [
+            [
+                "618797c718a17d33"
+            ]
+        ]
+    },
+    {
+        "id": "618797c718a17d33",
+        "type": "switch",
+        "z": "7547a558cf945eb1",
+        "g": "f111683363638e16",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "ready",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 290,
+        "y": 480,
+        "wires": [
+            [
+                "8f1d522bd9de4d4b"
+            ]
+        ]
+    },
+    {
+        "id": "6cf2992afd5bfc86",
+        "type": "debug",
+        "z": "7547a558cf945eb1",
+        "g": "f111683363638e16",
+        "name": "Bandeira",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1060,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "fef9acf18c4fb22e",
+        "type": "inject",
+        "z": "7547a558cf945eb1",
+        "d": true,
+        "g": "f111683363638e16",
+        "name": "",
+        "props": [
+            {
+                "p": "impostos.icms",
+                "v": "0.18",
+                "vt": "num"
+            },
+            {
+                "p": "impostos.pasep",
+                "v": "0.0083",
+                "vt": "num"
+            },
+            {
+                "p": "impostos.cofins",
+                "v": "0.0382",
+                "vt": "num"
+            },
+            {
+                "p": "kwh_consumido",
+                "v": "216",
+                "vt": "num"
+            },
+            {
+                "p": "total",
+                "v": "homeassistant.homeAssistant.states[\"sensor.consumo_total\"].state",
+                "vt": "global"
+            },
+            {
+                "p": "solar",
+                "v": "true",
+                "vt": "bool"
+            }
+        ],
+        "repeat": "1800",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "10",
+        "topic": "",
+        "x": 170,
+        "y": 620,
+        "wires": [
+            [
+                "90100faaf9e90caa"
+            ]
+        ]
+    },
+    {
+        "id": "41f1532bc9b0e46c",
+        "type": "function",
+        "z": "7547a558cf945eb1",
+        "g": "f111683363638e16",
+        "name": "Calculo Conta",
+        "func": "// Calcula impostos e o valor total da conta de luz\nif (msg.solar = true) {\nvar kwh_consumido;\n\n    if (msg.kwh_consumido > 50) {\n        kwh_consumido = 50 * (msg.valorKWh.tarifaTotal + msg.bandeiraTarifaria.valorAdicionalBandeira);\n    } else {\n        kwh_consumido = msg.kwh_consumido * (msg.valorKWh.tarifaTotal + msg.bandeiraTarifaria.valorAdicionalBandeira);\n    }\n\n\nlet aliquotaPasep = Number(msg.impostos.pasep);\nlet aliquotaCofins = Number(msg.impostos.cofins);\nlet aliquotaIcms = Number(msg.impostos.icms);\nlet aliquotaTotalPasepCofins = aliquotaPasep + aliquotaCofins;\n\n// Cálculo de PASEP e COFINS\nlet valorPasepCofins = parseInt((kwh_consumido / (1 - aliquotaTotalPasepCofins) - kwh_consumido) * 100) / 100;\nlet baseCalculoPasepCofins = parseInt((kwh_consumido + valorPasepCofins) * 100) / 100;\n\n// Cálculo do ICMS\nlet valorICMS = parseInt((baseCalculoPasepCofins / (1 - aliquotaIcms) - baseCalculoPasepCofins) * 100) / 100;\nlet baseCalculoICMS = parseInt((baseCalculoPasepCofins + valorICMS) * 100) / 100;\n\n// Valores finais de PASEP e COFINS\nlet valorPasep = parseInt((baseCalculoPasepCofins * aliquotaPasep) * 100) / 100;\nlet valorCofins = parseInt((baseCalculoPasepCofins * aliquotaCofins) * 100) / 100;\n\n// Monta o objeto final da conta de energia\nmsg.contaEnergia = {\n    total: baseCalculoICMS + msg.iluminacaoPublica.valorCIP,\n    ICMS: valorICMS,\n    PASEP: valorPasep,\n    COFINS: valorCofins,\n    baseCalculoPasepCofins,\n    baseCalculoICMS,\n    valorKwhConsumido: parseInt(kwh_consumido * 100) / 100,\n    CIP: msg.iluminacaoPublica.valorCIP\n};\n\n}\n\n// Remove propriedades desnecessárias da mensagem\n['payload', 'url', 'statusCode', 'responseUrl', 'redirectList', 'retry', 'headers'].forEach(propriedade => delete msg[propriedade]);\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 540,
+        "y": 780,
+        "wires": [
+            [
+                "ee551dd4e954c132",
+                "499b0a1d7553dc4f"
+            ]
+        ]
+    },
+    {
+        "id": "cf1fc2e4b0e86b7f",
+        "type": "debug",
+        "z": "7547a558cf945eb1",
+        "g": "f111683363638e16",
+        "name": "CIP",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1050,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "8724c9c1b789e008",
+        "type": "inject",
+        "z": "7547a558cf945eb1",
+        "d": true,
+        "g": "f111683363638e16",
+        "name": "",
+        "props": [
+            {
+                "p": "impostos.icms",
+                "v": "0.18",
+                "vt": "num"
+            },
+            {
+                "p": "impostos.pasep",
+                "v": "0.0083",
+                "vt": "num"
+            },
+            {
+                "p": "impostos.cofins",
+                "v": "0.0382",
+                "vt": "num"
+            },
+            {
+                "p": "kwh_consumido",
+                "v": "45",
+                "vt": "num"
+            },
+            {
+                "p": "total",
+                "v": "$number(global.homeassistant.homeAssistant.states[\"sensor.consumo_total\"].state)",
+                "vt": "jsonata"
+            },
+            {
+                "p": "solar",
+                "v": "true",
+                "vt": "bool"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "5",
+        "topic": "",
+        "x": 350,
+        "y": 620,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ee551dd4e954c132",
+        "type": "ha-sensor",
+        "z": "7547a558cf945eb1",
+        "g": "f111683363638e16",
+        "name": "Conta de energia",
+        "entityConfig": "c9bba9c972261e4d",
+        "version": 0,
+        "state": "contaEnergia.total",
+        "stateType": "msg",
+        "attributes": [
+            {
+                "property": "Bandeira",
+                "value": "bandeiraTarifaria.corBandeira",
+                "valueType": "msg"
+            },
+            {
+                "property": "CIP",
+                "value": "contaEnergia.CIP",
+                "valueType": "msg"
+            },
+            {
+                "property": "ICMS",
+                "value": "contaEnergia.ICMS",
+                "valueType": "msg"
+            },
+            {
+                "property": "PASEP",
+                "value": "contaEnergia.PASEP",
+                "valueType": "msg"
+            },
+            {
+                "property": "COFINS",
+                "value": "contaEnergia.COFINS",
+                "valueType": "msg"
+            },
+            {
+                "property": "Valor Kwh Consumido",
+                "value": "contaEnergia.valorKwhConsumido",
+                "valueType": "msg"
+            },
+            {
+                "property": "kwh Consumido",
+                "value": "kwh_consumido",
+                "valueType": "msg"
+            }
+        ],
+        "inputOverride": "allow",
+        "outputProperties": [],
+        "x": 750,
+        "y": 780,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "8f1d522bd9de4d4b",
+        "type": "change",
+        "z": "7547a558cf945eb1",
+        "g": "f111683363638e16",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "impostos.icms",
+                "pt": "msg",
+                "to": "0.18",
+                "tot": "num"
+            },
+            {
+                "t": "set",
+                "p": "impostos.pasep",
+                "pt": "msg",
+                "to": "0.0083",
+                "tot": "num"
+            },
+            {
+                "t": "set",
+                "p": "impostos.cofins",
+                "pt": "msg",
+                "to": "0.0382",
+                "tot": "num"
+            },
+            {
+                "t": "set",
+                "p": "solar",
+                "pt": "msg",
+                "to": "true",
+                "tot": "bool"
+            },
+            {
+                "t": "set",
+                "p": "kwh_consumido",
+                "pt": "msg",
+                "to": "homeassistant.homeAssistant.states[\"sensor.consumo_mensal_total\"].state",
+                "tot": "global"
+            },
+            {
+                "t": "set",
+                "p": "total",
+                "pt": "msg",
+                "to": "homeassistant.homeAssistant.states[\"sensor.consumo_total\"].state",
+                "tot": "global"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 320,
+        "y": 540,
+        "wires": [
+            [
+                "90100faaf9e90caa"
+            ]
+        ]
+    },
+    {
+        "id": "16a008bb758d65b3",
+        "type": "inject",
+        "z": "7547a558cf945eb1",
+        "g": "f111683363638e16",
+        "name": "",
+        "props": [],
+        "repeat": "1800",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "10",
+        "topic": "",
+        "x": 130,
+        "y": 540,
+        "wires": [
+            [
+                "8f1d522bd9de4d4b"
+            ]
+        ]
+    },
+    {
+        "id": "33803899.487d48",
+        "type": "server",
+        "name": "Home Assistant",
+        "version": 5,
+        "addon": true,
+        "rejectUnauthorizedCerts": true,
+        "ha_boolean": "y|yes|true|on|home|open",
+        "connectionDelay": true,
+        "cacheJson": true,
+        "heartbeat": false,
+        "heartbeatInterval": "30",
+        "areaSelector": "friendlyName",
+        "deviceSelector": "friendlyName",
+        "entitySelector": "friendlyName",
+        "statusSeparator": "at: ",
+        "statusYear": "hidden",
+        "statusMonth": "short",
+        "statusDay": "numeric",
+        "statusHourCycle": "h23",
+        "statusTimeFormat": "h:m",
+        "enableGlobalContextStore": true
+    },
+    {
+        "id": "c9bba9c972261e4d",
+        "type": "ha-entity-config",
+        "server": "33803899.487d48",
+        "deviceConfig": "",
+        "name": "Conta de energia",
+        "version": 6,
+        "entityType": "sensor",
+        "haConfig": [
+            {
+                "property": "name",
+                "value": "Conta de energia"
+            },
+            {
+                "property": "icon",
+                "value": "mdi:currency-brl"
+            },
+            {
+                "property": "entity_picture",
+                "value": ""
+            },
+            {
+                "property": "entity_category",
+                "value": ""
+            },
+            {
+                "property": "device_class",
+                "value": ""
+            },
+            {
+                "property": "unit_of_measurement",
+                "value": "R$"
+            },
+            {
+                "property": "state_class",
+                "value": ""
+            }
+        ],
+        "resend": false,
+        "debugEnabled": false
+    }
+]
